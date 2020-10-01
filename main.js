@@ -9,11 +9,16 @@ var mainState = {
         
         //Load jump sound
         game.load.audio('jump', 'assets/jump.wav');
+        
+        game.load.image('bg', 'assets/bg.png');
     },
 
     create: function () {
         //Change the background color of the game to blue
-        game.stage.backgroundColor = '#71c5cf';
+        //game.stage.backgroundColor = '#71c5cf';
+        
+        //add background image
+        skyTile = game.add.tileSprite(0, 0, 400, 600, 'bg');
 
         //Start the physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -80,9 +85,9 @@ var mainState = {
         //This will be the hole position
         var hole = Math.floor(Math.random() * 5) + 1;
         
-        //Add the 6 pipes
+        //Add the 8 pipes
         //With one big hole at position hole and hole + 1
-        for (var i=0; i < 8; i++) {
+        for (var i=0; i < 10; i++) {
             if(i != hole && i != hole + 1)
                 this.addOnePipe(400, i * 60 + 10);
         }
@@ -96,6 +101,9 @@ var mainState = {
         //bird animation
         if(this.bird.angle < 20)
             this.bird.angle += 1;
+        
+        //move sky
+        skyTile.tilePosition.x = skyTile.tilePosition.x - 5;
         
         //If the bird is out of the screen(too high or low)
         //Call the 'restartGame' function
@@ -150,13 +158,22 @@ var mainState = {
         //change score color to red
         this.labelScore.addColor("#ff0000", 0);
         
-        //Start the 'main' state, which restarts the game
-        game.state.start('main');
+        //Prevent new pipes from appearing
+        game.time.events.remove(this.timer);
+        
+        setTimeout(restart(), 2000);
     }
 };
 
-//Initialize Phaser, and create a 400 x 900px game
-var game = new Phaser.Game(400, 900);
+function restart(){
+    //Start the 'main' state, which restarts the game
+    game.state.start('main');
+}
+
+//Initialize Phaser, and create a 400 x 600px game
+var game = new Phaser.Game(400, 600);
+
+var skyTile;
 
 //Add the mainState and call it main
 game.state.add('main', mainState);
